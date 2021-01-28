@@ -1,4 +1,4 @@
-from selenium_scraper import SeleniumClass
+from selenium_scraper import Scraper
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver import ActionChains
 import time
@@ -23,14 +23,14 @@ def amazon():
     countries = ["fr", "it", "es", "de", "co.uk"]
     ps5 = {"item": "Playstation 5", "min_price": 498, "price_max":520,"link":"https://www.amazon.fr/PlayStation-%C3%89dition-Standard-DualSense-Couleur/dp/B08H93ZRK9"}
     items = [ps5]
-    # items = [oral_b]
+
     def browsers_creator():
         browsers = []
         i = 0
         for item in items:
             for country in countries:
                 url = item["link"].replace(".fr", f".{country}")
-                browser = SeleniumClass(headless=False).open_browser()
+                browser = Scraper(headless=False).open_browser()
                 browser.get(url)
                 try:
                     browser.find_element_by_id("sp-cc-accept").click()
@@ -66,6 +66,7 @@ def amazon():
             country = obj["country"]
             browser.refresh()
             price = 9999999
+            currency = "€"
             try:
                 if country == "FR":
                     price = float(browser.find_element_by_id("price_inside_buybox").text.replace("€", "").replace(",", ".").replace(" ", ""))
@@ -73,6 +74,7 @@ def amazon():
                     price = float(browser.find_element_by_id("price_inside_buybox").text.replace("€", "").replace(".", "").replace(",", "."))
                 if country == "CO.UK":
                     price = float(browser.find_element_by_id("price_inside_buybox").text.replace("£", "").replace(",", ""))
+                    currency = "£"
             except:
                 pass
             try:
@@ -87,10 +89,10 @@ def amazon():
                 if price == 9999999:
                     print(f"{item} not available on Amazon {country}")
                 else:
-                    print(f"{item} current price is {price}€ on Amazon {country}")
+                    print(f"{item} current price is {price}{currency} on Amazon {country}")
                 if price < price_max and price > min_price:
                     os.system("vlc /home/locsta/Downloads/screaming_goat.mp3")
-                    print(f"FOUND {item} at {price}€!!!")
+                    print(f"FOUND {item} at {price}{currency}!!!")
                     # Click on buy button
                     WebDriverWait(browser, 3).until(EC.presence_of_element_located((By.ID, 'buy-now-button'))).click()
                     browser.maximize_window()
