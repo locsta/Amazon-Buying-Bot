@@ -2,7 +2,7 @@
 This bot aims to help the user buy a product with low availability and high demand (eg PS5)
 
 ## Mandatory
-In order to run the bot you will need to download my (Scraper module)[https://github.com/locsta/Scraper]
+In order to run the bot you will need to download my [Scraper module](https://github.com/locsta/Scraper)
 The other librairies are all available for installation using pip
 
 ## What the bot does
@@ -15,7 +15,7 @@ The other librairies are all available for installation using pip
 This project is a work in progress
 Further improvements will be done later, such as:
     * better CLI
-    * (integrated captcha solver)[https://github.com/locsta/Amazon-Captcha-Solver] (if that's doable)
+    * [integrated captcha solver](https://github.com/locsta/Amazon-Captcha-Solver) (if that's doable)
     * remove autogui library completely (and the problems that comes with it)
     * possibility of saving your email/password locally and safely
     * ini file to save sets of parameters
