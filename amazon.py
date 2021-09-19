@@ -17,7 +17,6 @@ import pyautogui
 import threading
 
 def amazon():
-    # beep = lambda x: os.system("echo -n '\a';sleep 0.2;" * x)
     login_email = input("Enter your email for Amazon:")
     login_password = input("Enter your password for Amazon:")
     countries = ["fr", "it", "es", "de", "co.uk"]
@@ -57,67 +56,66 @@ def amazon():
         return next(browsers_cycle)
 
     while True:
-        while True:
-            obj = next_browser()
-            browser = obj["browser"]
-            price_max = obj["price_max"]
-            min_price = obj["min_price"]
-            item = obj["item"]
-            country = obj["country"]
-            browser.refresh()
-            price = 9999999
-            currency = "€"
-            try:
-                if country == "FR":
-                    price = float(browser.find_element_by_id("price_inside_buybox").text.replace("€", "").replace(",", ".").replace(" ", ""))
-                if country == "IT" or country == "ES" or country == "DE":
-                    price = float(browser.find_element_by_id("price_inside_buybox").text.replace("€", "").replace(".", "").replace(",", "."))
-                if country == "CO.UK":
-                    price = float(browser.find_element_by_id("price_inside_buybox").text.replace("£", "").replace(",", ""))
-                    currency = "£"
-            except:
-                pass
-            try:
-                captcha = browser.find_element_by_id("captchacharacters")
-            except:
-                captcha = None
-            if captcha:
-                print(f"Enter captcha for Amazon {country}")
-                os.system("vlc /home/locsta/Downloads/screaming_goat.mp3")
-                time.sleep(15)
+        obj = next_browser()
+        browser = obj["browser"]
+        price_max = obj["price_max"]
+        min_price = obj["min_price"]
+        item = obj["item"]
+        country = obj["country"]
+        browser.refresh()
+        price = 9999999
+        currency = "€"
+        try:
+            if country == "FR":
+                price = float(browser.find_element_by_id("price_inside_buybox").text.replace("€", "").replace(",", ".").replace(" ", ""))
+            if country == "IT" or country == "ES" or country == "DE":
+                price = float(browser.find_element_by_id("price_inside_buybox").text.replace("€", "").replace(".", "").replace(",", "."))
+            if country == "CO.UK":
+                price = float(browser.find_element_by_id("price_inside_buybox").text.replace("£", "").replace(",", ""))
+                currency = "£"
+        except:
+            pass
+        try:
+            captcha = browser.find_element_by_id("captchacharacters")
+        except:
+            captcha = None
+        if captcha:
+            print(f"Enter captcha for Amazon {country}")
+            os.system("vlc /home/locsta/Downloads/screaming_goat.mp3")
+            time.sleep(15)
+        else:
+            if price == 9999999:
+                print(f"{item} not available on Amazon {country}")
             else:
-                if price == 9999999:
-                    print(f"{item} not available on Amazon {country}")
-                else:
-                    print(f"{item} current price is {price}{currency} on Amazon {country}")
-                if price < price_max and price > min_price:
-                    os.system("vlc /home/locsta/Downloads/screaming_goat.mp3")
-                    print(f"FOUND {item} at {price}{currency}!!!")
-                    # Click on buy button
-                    WebDriverWait(browser, 3).until(EC.presence_of_element_located((By.ID, 'buy-now-button'))).click()
-                    browser.maximize_window()
-                    # Next page skip amazon prime offer
+                print(f"{item} current price is {price}{currency} on Amazon {country}")
+            if price < price_max and price > min_price:
+                os.system("vlc /home/locsta/Downloads/screaming_goat.mp3")
+                print(f"FOUND {item} at {price}{currency}!!!")
+                # Click on buy button
+                WebDriverWait(browser, 3).until(EC.presence_of_element_located((By.ID, 'buy-now-button'))).click()
+                browser.maximize_window()
+                # Next page skip amazon prime offer
+                try:
+                    prime_promo = browser.find_element_by_id("prime-declineCTA")
+                    if prime_promo:
+                        prime_promo.click()
+                except:
                     try:
-                        prime_promo = browser.find_element_by_id("prime-declineCTA")
-                        if prime_promo:
-                            prime_promo.click()
+                        browser.find_element_by_id("turbo-checkout-pyo-button").find_element_by_xpath('..').click()
                     except:
+                        # Place order
+                        time.sleep(5)
+                        pyautogui.click((4030, 1048))
+                        # pyautogui.moveTo((2600, 880))
                         try:
-                            browser.find_element_by_id("turbo-checkout-pyo-button").find_element_by_xpath('..').click()
+                            WebDriverWait(browser, 8).until(EC.presence_of_element_located((By.ID, 'placeYourOrder'))).click()
                         except:
-                            # Place order
-                            time.sleep(5)
-                            pyautogui.click((4030, 1048))
-                            # pyautogui.moveTo((2600, 880))
-                            try:
-                                WebDriverWait(browser, 8).until(EC.presence_of_element_located((By.ID, 'placeYourOrder'))).click()
-                            except:
-                                pass
-                            os.system("vlc /home/locsta/Downloads/screaming_goat.mp3")
-                            return
-                else:
-                    time.sleep(2)
-                    continue
+                            pass
+                        os.system("vlc /home/locsta/Downloads/screaming_goat.mp3")
+                        return
+            else:
+                time.sleep(2)
+                continue
 
 if __name__ == '__main__':
     # execute only if run as the entry point into the program
